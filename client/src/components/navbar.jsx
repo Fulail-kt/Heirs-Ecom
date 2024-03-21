@@ -64,7 +64,6 @@ function Navbar() {
       <div className='fknavbar w-full h-16'></div>
 
       <Modal isOpen={showLogoutModal} toggleModal={() => setShowLogoutModal(!showLogoutModal)}>
-        <h1>Confirm Logout</h1>
         <p>Are you sure you want to log out?</p>
         <div className="flex justify-center mt-4">
           <button onClick={confirmLogout} className="mr-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">Yes, Logout</button>

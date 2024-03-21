@@ -29,7 +29,7 @@ const login = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Incorrect password' });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '2d' });
 
         res.status(200).json({ success: true, message: 'Successfully logged in', user: user, token });
     } catch (e) {
@@ -92,18 +92,18 @@ const addCart = async (req, res) => {
 
         for (let i = 0; i < products.length; i++) {
             const { id, quantity } = products[i];
-        
+
             const product = await Product.findById(id);
 
-        
+
             if (!product) {
                 console.error(`Product with ID ${id} not found`);
                 continue;
             }
-        
+
             const existingIndex = user.cart.findIndex(item => item.product.toString() === id);
             console.log("Existing index:", existingIndex);
-        
+
             if (existingIndex !== -1) {
                 const existingCartItem = user.cart[existingIndex];
                 if (product.stock >= existingCartItem.quantity + quantity) {
@@ -116,7 +116,7 @@ const addCart = async (req, res) => {
             } else {
                 if (product.stock >= quantity) {
                     user.cart.push({
-                        product:id,
+                        product: id,
                         quantity,
                         price: product.price,
                         total: product.price * quantity
@@ -124,10 +124,10 @@ const addCart = async (req, res) => {
                 }
             }
         }
-        
-        
+
+
         await user.save();
-        
+
         console.log("User saved successfully.");
 
         return res.status(200).json({ success: true, message: 'Successfully added products to cart' });
