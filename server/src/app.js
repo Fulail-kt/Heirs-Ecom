@@ -9,11 +9,11 @@ dotenv.config();
 const app=express()
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-app.use(cors({ origin:process.env.FRONTEND_URL}));
+app.use(cors({ origin:"*"}));
 app.use('/api/v1',userRoutes)
 app.use('/api/v1/admin',adminRoutes)
-
-app.listen(3004,()=>{
+const PORT=process.env.PORT
+app.listen(PORT,()=>{
     Database()
     console.log("node server running")
 })
