@@ -81,8 +81,6 @@ const create = async (req, res) => {
 
 const addCart = async (req, res) => {
     try {
-        console.log("Start adding to cart...");
-
         const userId = req.user.id;
         const products = req.body.cart;
         const user = await User.findById(userId);
@@ -92,22 +90,18 @@ const addCart = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        console.log("User found:", user);
-
         for (let i = 0; i < products.length; i++) {
-            const { productId, quantity } = products[i];
-            console.log("Product ID:", productId);
-            console.log("Quantity:", quantity);
+            const { id, quantity } = products[i];
         
-            const product = await Product.findById(productId);
-            console.log("Product:", product);
+            const product = await Product.findById(id);
+
         
             if (!product) {
-                console.error(`Product with ID ${productId} not found`);
+                console.error(`Product with ID ${id} not found`);
                 continue;
             }
         
-            const existingIndex = user.cart.findIndex(item => item.product.toString() === productId);
+            const existingIndex = user.cart.findIndex(item => item.product.toString() === id);
             console.log("Existing index:", existingIndex);
         
             if (existingIndex !== -1) {
@@ -116,13 +110,13 @@ const addCart = async (req, res) => {
                     existingCartItem.quantity += quantity;
                     existingCartItem.total += product.price * quantity;
                 } else {
-                    console.error(`Adding more quantity for product with ID ${productId} exceeds available stock`);
+                    console.error(`Adding more quantity for product with ID ${id} exceeds available stock`);
                     continue;
                 }
             } else {
                 if (product.stock >= quantity) {
                     user.cart.push({
-                        product: productId,
+                        product:id,
                         quantity,
                         price: product.price,
                         total: product.price * quantity
@@ -131,7 +125,6 @@ const addCart = async (req, res) => {
             }
         }
         
-        console.log("Updated User:", user);
         
         await user.save();
         

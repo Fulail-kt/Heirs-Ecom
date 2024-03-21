@@ -47,13 +47,12 @@ const Signup = () => {
             <Toaster />
             <Navbar/>
             {loading ? (<p>loading</p>) : (
-                <div className="login_bg justify-center h-screen py-6 flex flex-col w-full sm:py-12">
-                    <div className="relative py-3 sm:max-w-xl w-[30%] sm:mx-auto">
+                <div className="login_bg justify-center items-center h-screen py-6 flex flex-col w-full sm:py-12">
+                    <div className="relative py-3 w-[70%] md:w-[28%]">
                         <div className="absolute inset-0 bg-gradient-to-r from-gray-500 to-gray-900 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
                         <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-14">
                             <div className="max-w-md mx-auto">
                                 <div className='flex w-full justify-center'>
-                                    {/* <img src='' width={140} alt="sample logo" /> */}
                                     <h1 className='font-serif text-lg font-semibold'>SIGNUP</h1>
                                 </div>
                                 <form onSubmit={handleSubmit(onSubmit)}>

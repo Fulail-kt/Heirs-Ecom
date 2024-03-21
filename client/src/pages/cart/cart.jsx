@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './cart.css';
 import api from '../../services/api';
 import { jwtDecode } from 'jwt-decode';
 import Navbar from '../../components/navbar';
@@ -29,8 +28,8 @@ function Cart() {
       }
     } catch (error) {
       console.log(error);
-    }finally{
-setLoading(false)
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -132,7 +131,7 @@ setLoading(false)
   };
 
   const totalAmount = calculateTotalAmount();
-  
+
 
   return (
     <>
@@ -143,7 +142,7 @@ setLoading(false)
           <p>Your cart is empty.</p>
         ) : (
           <>
-            {loading?(<PuffLoader color="#000" size={50} />):(<table className='w-75 text-center'>
+            {loading ? (<PuffLoader color="#000" size={50} />) : (<table className='w-75 text-center'>
               <thead>
                 <tr>
                   <th scope="col">No</th>
@@ -155,7 +154,7 @@ setLoading(false)
               </thead>
               <tbody>
                 {cartItems.map((product, index) => (
-                  <tr key={product._id + index}>
+                  <tr className='border gap-y-4' key={index}>
                     <td>{index + 1}</td>
                     {token ? (<><td className='flex justify-center'>
                       <img src={product.product.images[0]} width={90} alt="" />
@@ -191,10 +190,14 @@ setLoading(false)
         )}
       </div>
       <div className='container border-t-4 pt-4 w-100 flex flex-col justify-center items-end' >
-      <div>
-        <p className='text-danger fs-2'>Total: ₹ {totalAmount}</p>
-      <div className='text-center p-4 '><Link to='/checkout' ><button className='bg-gray-600  p-2 px-4 rounded-full text-white font-bold'>Proced to Checkout</button></Link></div>
-      </div>
+        <div>
+          <p className='text-danger fs-2'>Total: ₹ {totalAmount}</p>
+          <div className='text-center py-4'>{cartItems.length > 0 ? (
+            <Link to='/checkout'>
+              <button className='bg-gray-600 p-2 px-4 rounded-full text-white font-bold'>Proceed to Checkout</button>
+            </Link>
+          ) : (<button className='bg-gray-400 p-2 px-4 rounded-full  text-white font-bold'>Proceed to Checkout</button>)}</div>
+        </div>
       </div>
     </>
   );

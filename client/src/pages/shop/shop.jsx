@@ -28,18 +28,16 @@ function Shop() {
   useEffect(() => {
     if (token && cartItems.length > 0 && !cart.length) {
       setCart(cartItems);
-      addProduct();
+      addProduct(cartItems);
     }
   }, [token, cartItems, cart]); 
 
-  const addProduct = async () => {
-    console.log("called")
+  const addProduct = async (cart) => {
     try {
       const res = await api.post(`/addCart`, { cart });
 
       if (res.data.success) {
         localStorage.removeItem('cartItems');
-        toast.success(res.data.message);
       }
       
     } catch (error) {

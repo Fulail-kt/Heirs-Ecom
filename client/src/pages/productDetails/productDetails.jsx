@@ -73,14 +73,14 @@ function ProductDetails() {
     <Toaster/>
     <Navbar/>
     <div className="w-full flex justify-between mt-20">
-    <div className="w-1/2 flex justify-around border-r-4 ">
-      <div className="flex flex-col items-center justify-center">
+    <div className="w-1/2 flex  flex-col-reverse md:flex-row justify-around items-center border-r-4 ">
+      <div className="flex md:flex-col items-center justify-center">
         <img src={product.images} alt="1" className="w-12 p-1" sizes={10} />
         <img src={product.images} alt="2" className="w-12 p-1" sizes={10} />
         <img src={product.images} alt="3" className="w-12 p-1" sizes={10} />
         <img src={product.images} alt="4" className="w-12 p-1" sizes={10} />
       </div>
-      <img src={product?.images} sizes={32} className="w-1/2" alt="" />
+      <div className='md:w-1/2 w-[50%] '><img src={product?.images} sizes={32} className="w-full h-full" alt="" /></div>
     </div>
     <div className="w-1/2">
       <div className="prd">
