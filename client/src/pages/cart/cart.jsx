@@ -21,10 +21,6 @@ function Cart() {
         if (res.data.success) {
           setCartItems(res?.data?.user?.cart);
         }
-      } else {
-        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
-        setCartItems(cartItems)
       }
     } catch (error) {
       console.log(error);
@@ -138,65 +134,76 @@ function Cart() {
       <Toaster />
       <Navbar />
       <div className='w-100 h-100vh d-flex justify-content-center align-items-center' style={{ minHeight: '60vh' }}>
-        {cartItems.length === 0 ? (
-          <p>Your cart is empty.</p>
+        {loading || !cartItems ? (
+          <PuffLoader color="#000" size={50} />
         ) : (
           <>
-            {loading ? (<PuffLoader color="#000" size={50} />) : (<table className='w-75 text-center'>
-              <thead>
-                <tr>
-                  <th scope="col">No</th>
-                  <th scope="col">Image</th>
-                  <th scope="col">Product</th>
-                  <th scope="col">Quantity</th>
-                  <th scope="col">Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cartItems.map((product, index) => (
-                  <tr className='border gap-y-4' key={index}>
-                    <td>{index + 1}</td>
-                    {token ? (<><td className='flex justify-center'>
-                      <img src={product.product.images[0]} width={90} alt="" />
-                    </td>
-                      <td>{product.product.title}</td>
-                      <td>
-                        <button className='btn btn-dark p-1' onClick={() => updateQuantity(product.product._id, 'decrement')}>-</button>
-                        <span className='p-1'>{product.quantity}</span>
-                        <button className='btn btn-dark p-1' onClick={() => updateQuantity(product.product._id, 'increment')}>+</button>
-                      </td>
-                      <td>₹ {product.price * product.quantity}</td>
-                      <td><button onClick={() => handleDelete(product.product._id)}><TrashSimple size={24} color="red" /></button></td>
-                    </>
-                    ) : (<>
-                      <td className='flex justify-center'>
-                        <img src={product.image} width={90} alt="" />
-                      </td>
-                      <td>{product.title}</td>
-                      <td>
-                        <button className='btn btn-dark p-1' onClick={() => updateQuantity(product.id, 'decrement')}>-</button>
-                        <span className='p-1'>{product.quantity}</span>
-                        <button className='btn btn-dark p-1' onClick={() => updateQuantity(product.id, 'increment')}>+</button>
-                      </td>
-                      <td>₹ {product.price * product.quantity}</td>
-                      <td><button onClick={() => handleDelete(product.id)}><TrashSimple size={24} color="red" /></button></td>
-                    </>
-                    )}
+            {cartItems.length === 0 ? (
+              <p>Your cart is empty.</p>
+            ) : (
+              <table className='w-75 text-center'>
+                <thead>
+                  <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>)}
+                </thead>
+                <tbody>
+                  {cartItems.map((product, index) => (
+                    <tr className='border gap-y-4' key={index}>
+                      <td>{index + 1}</td>
+                      {token ? (
+                        <>
+                          <td className='flex justify-center'>
+                            <img src={product.product.images[0]} width={90} alt="" />
+                          </td>
+                          <td>{product.product.title}</td>
+                          <td>
+                            <button className='btn btn-dark p-1' onClick={() => updateQuantity(product.product._id, 'decrement')}>-</button>
+                            <span className='p-1'>{product.quantity}</span>
+                            <button className='btn btn-dark p-1' onClick={() => updateQuantity(product.product._id, 'increment')}>+</button>
+                          </td>
+                          <td>₹ {product.price * product.quantity}</td>
+                          <td><button onClick={() => handleDelete(product.product._id)}><TrashSimple size={24} color="red" /></button></td>
+                        </>
+                      ) : (
+                        <>
+                          <td className='flex justify-center'>
+                            <img src={product.image} width={90} alt="" />
+                          </td>
+                          <td>{product.title}</td>
+                          <td>
+                            <button className='btn btn-dark p-1' onClick={() => updateQuantity(product.id, 'decrement')}>-</button>
+                            <span className='p-1'>{product.quantity}</span>
+                            <button className='btn btn-dark p-1' onClick={() => updateQuantity(product.id, 'increment')}>+</button>
+                          </td>
+                          <td>₹ {product.price * product.quantity}</td>
+                          <td><button onClick={() => handleDelete(product.id)}><TrashSimple size={24} color="red" /></button></td>
+                        </>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </>
         )}
       </div>
       <div className='container border-t-4 pt-4 w-100 flex flex-col justify-center items-end' >
         <div>
           <p className='text-danger fs-2'>Total: ₹ {totalAmount}</p>
-          <div className='text-center py-4'>{cartItems.length > 0 ? (
-            <Link to='/checkout'>
-              <button className='bg-gray-600 p-2 px-4 rounded-full text-white font-bold'>Proceed to Checkout</button>
-            </Link>
-          ) : (<button className='bg-gray-400 p-2 px-4 rounded-full  text-white font-bold'>Proceed to Checkout</button>)}</div>
+          <div className='text-center py-4'>
+            {cartItems.length > 0 ? (
+              <Link to='/checkout'>
+                <button className='bg-gray-600 p-2 px-4 rounded-full text-white font-bold'>Proceed to Checkout</button>
+              </Link>
+            ) : (
+              <button className='bg-gray-400 p-2 px-4 rounded-full  text-white font-bold'>Proceed to Checkout</button>
+            )}
+          </div>
         </div>
       </div>
     </>

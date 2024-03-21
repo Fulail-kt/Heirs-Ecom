@@ -54,7 +54,7 @@ function Shop() {
       <Toaster />
       <Navbar />
       {loading ? (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex justify-center w-full items-center h-screen">
           <PuffLoader color="#000" size={50} />
         </div>
       ) : (
