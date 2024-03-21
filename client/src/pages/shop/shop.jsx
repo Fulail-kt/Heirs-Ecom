@@ -33,6 +33,7 @@ function Shop() {
   }, [token, cartItems, cart]); 
 
   const addProduct = async () => {
+    console.log("called")
     try {
       const res = await api.post(`/addCart`, { cart });
 

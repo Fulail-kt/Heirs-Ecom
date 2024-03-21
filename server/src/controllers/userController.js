@@ -81,39 +81,45 @@ const create = async (req, res) => {
 
 const addCart = async (req, res) => {
     try {
+        console.log("Start adding to cart...");
 
-        const userId = req.user.id
+        const userId = req.user.id;
+        const products = req.body.cart;
+        const user = await User.findById(userId);
 
-        const products = req.body.cart
-        const user = await User.findById({ _id: userId })
+        if (!user) {
+            console.error(`User with ID ${userId} not found`);
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        console.log("User found:", user);
 
         for (let i = 0; i < products.length; i++) {
             const { productId, quantity } = products[i];
-
+            console.log("Product ID:", productId);
+            console.log("Quantity:", quantity);
+        
             const product = await Product.findById(productId);
-
+            console.log("Product:", product);
+        
             if (!product) {
                 console.error(`Product with ID ${productId} not found`);
                 continue;
             }
-
-
+        
             const existingIndex = user.cart.findIndex(item => item.product.toString() === productId);
-
-            console.log(existingIndex)
-
+            console.log("Existing index:", existingIndex);
+        
             if (existingIndex !== -1) {
                 const existingCartItem = user.cart[existingIndex];
                 if (product.stock >= existingCartItem.quantity + quantity) {
                     existingCartItem.quantity += quantity;
                     existingCartItem.total += product.price * quantity;
                 } else {
-                    console.error(`Adding more quantity for product with ID ${id} exceeds available stock`);
+                    console.error(`Adding more quantity for product with ID ${productId} exceeds available stock`);
                     continue;
                 }
             } else {
-
-                console.log(product.stock, "dld")
                 if (product.stock >= quantity) {
                     user.cart.push({
                         product: productId,
@@ -124,17 +130,19 @@ const addCart = async (req, res) => {
                 }
             }
         }
+        
+        console.log("Updated User:", user);
+        
+        await user.save();
+        
+        console.log("User saved successfully.");
 
-        await user.save()
-
-        return res.status(200).json({ success: true, messsage: 'successfully products add to cart' })
-
+        return res.status(200).json({ success: true, message: 'Successfully added products to cart' });
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({ success: false, messsage: 'server Error' })
-
+        console.error("Error adding to cart:", error);
+        return res.status(500).json({ success: false, message: 'Server Error' });
     }
-}
+};
 
 const addToCart = async (req, res) => {
     try {
