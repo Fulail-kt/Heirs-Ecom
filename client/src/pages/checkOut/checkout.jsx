@@ -2,9 +2,11 @@ import { jwtDecode } from 'jwt-decode';
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
 import Navbar from '../../components/navbar';
+import { PuffLoader } from "react-spinners";
 
 function CheckoutPage() {
   const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true); 
   const token = localStorage.getItem('token');
 
   const fetchData = async () => {
@@ -18,15 +20,16 @@ function CheckoutPage() {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false); 
     }
   };
 
-
   useEffect(() => {
     if (token) {
-      fetchData()
+      fetchData();
     }
-  }, [])
+  }, []);
 
   return (
     <>
@@ -55,20 +58,26 @@ function CheckoutPage() {
             </div>
             <div className="md:w-1/2 mt-8 md:mt-0">
               <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-              <div className="bg-gray-100 p-4 rounded-md">
-                {cartItems.map((item, index) => (
-                  <div key={index} className="flex justify-between mb-2">
-                    <span><img src={item?.product?.images[0]} width={80} />{ }</span>
-                    <span>{item.product.title}</span>
-                    <span>${item.price}</span>
-                  </div>
-                ))}
-                <hr className="my-2" />
-                <div className="flex justify-between">
-                  <span className="font-semibold">Total</span>
-                  <span className="font-semibold">${cartItems.reduce((total, item) => total + item.price, 0)}</span>
+              {loading ? ( 
+                <div className="flex justify-center items-center">
+                  <PuffLoader color="#000" size={50} />
                 </div>
-              </div>
+              ) : (
+                <div className="bg-gray-100 p-4 rounded-md">
+                  {cartItems.map((item, index) => (
+                    <div key={index} className="flex justify-between mb-2">
+                      <span><img src={item?.product?.images[0]} width={80} />{ }</span>
+                      <span>{item.product.title}</span>
+                      <span>${item.price}</span>
+                    </div>
+                  ))}
+                  <hr className="my-2" />
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Total</span>
+                    <span className="font-semibold">${cartItems.reduce((total, item) => total + item.price, 0)}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

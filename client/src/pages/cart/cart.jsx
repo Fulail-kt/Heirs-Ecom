@@ -6,10 +6,11 @@ import Navbar from '../../components/navbar';
 import toast, { Toaster } from 'react-hot-toast';
 import { TrashSimple } from 'phosphor-react';
 import { Link } from 'react-router-dom';
+import { PuffLoader } from 'react-spinners';
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token');
 
   const fetchData = async () => {
@@ -28,6 +29,8 @@ function Cart() {
       }
     } catch (error) {
       console.log(error);
+    }finally{
+setLoading(false)
     }
   };
 
@@ -139,7 +142,7 @@ function Cart() {
           <p>Your cart is empty.</p>
         ) : (
           <>
-            <table className='w-75 text-center'>
+            {loading?(<PuffLoader color="#000" size={50} />):(<table className='w-75 text-center'>
               <thead>
                 <tr>
                   <th scope="col">No</th>
@@ -182,7 +185,7 @@ function Cart() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table>)}
           </>
         )}
       </div>

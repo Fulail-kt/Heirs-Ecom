@@ -4,10 +4,12 @@ import Product from './product';
 import api from '../../services/api';
 import toast, { Toaster } from 'react-hot-toast';
 import Navbar from '../../components/navbar';
+import { PuffLoader } from "react-spinners";
 
 function Shop() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true); 
 
   const fetchProduct = async () => {
     try {
@@ -15,10 +17,10 @@ function Shop() {
       setProducts(res?.data?.products);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false); 
     }
   };
-
- 
 
   const token = localStorage.getItem('token');
   let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
@@ -26,17 +28,17 @@ function Shop() {
   useEffect(() => {
     if (token && cartItems.length > 0 && !cart.length) {
       setCart(cartItems);
-      addProduct()
+      addProduct();
     }
   }, [token, cartItems, cart]); 
 
   const addProduct = async () => {
     try {
-      const res = await api.post(`/addCart`,{cart});
+      const res = await api.post(`/addCart`, { cart });
 
-      if(res.data.success){
-        localStorage.removeItem('cartItems')
-        toast.success(res.data.message)
+      if (res.data.success) {
+        localStorage.removeItem('cartItems');
+        toast.success(res.data.message);
       }
       
     } catch (error) {
@@ -48,20 +50,24 @@ function Shop() {
     fetchProduct();
   }, []); 
 
-
-
   return (
     <>
       <Toaster />
       <Navbar />
-      <div className='shop'>
-        <div className='bg-gradient-to-br from-gray-400 to-gray-800 h-40 m-4 rounded-md'></div>
-        <div className='products grid grid-cols-1 md:grid-cols-3'>
-          {products?.map((product, index) => (
-            <Product key={index} data={product} />
-          ))}
+      {loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <PuffLoader color="#000" size={50} />
         </div>
-      </div>
+      ) : (
+        <div className='shop'>
+          <div className='bg-gradient-to-br from-gray-400 to-gray-800 h-40 m-4 rounded-md'></div>
+          <div className='products grid grid-cols-1 md:grid-cols-3'>
+            {products?.map((product, index) => (
+              <Product key={index} data={product} />
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }
