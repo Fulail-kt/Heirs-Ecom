@@ -1,0 +1,62 @@
+body{
+    margin: 0;
+    box-sizing: border-box;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.shopTitle{
+    text-align: center;
+    font-size: 20px;
+}
+
+.products{
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    place-items: center;
+
+}
+
+.product{
+    border-radius: 15px;
+    width: 300px;
+    height: 350px;
+    display: flex;
+    margin: 50px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.product img{
+    width: 200px;
+}
+.product .description{
+    text-align: center;
+}
+
+.product:hover{
+    transition: 0.3s ease-in;
+    cursor: pointer;
+}
+
+
+
+::-webkit-scrollbar{
+   display: none;
+;
+}
+
+.addToCart{
+    color: rgb(41, 41, 41);
+    padding: 3px 18px;
+    background: #ffffff;
+    border-radius: 20px;
+    border:1px solid rgb(41,41,41);
+    cursor: pointer;
+}
+.addToCart:hover{
+    color: #ffffff;
+    background: #222222;
+}
