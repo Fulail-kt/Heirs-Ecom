@@ -1,7 +1,8 @@
 import React,{useEffect, useState} from 'react'
 import { useParams } from 'react-router-dom';
 import api from '../../services/api';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
+import Navbar from '../../components/navbar';
 
 function ProductDetails() {
 
@@ -26,31 +27,33 @@ function ProductDetails() {
 },[])
 
 
-  const addToCart = async (productId) => {
+  const addToCart = async (id) => {
 
     try {
-      if(!productId){
+      if(!id){
       return toast.error('product ID missing')
       }
 
       const token = localStorage.getItem('token');
       if (token) {
-        const res = await api.post(`/add-to-cart/${productId}`);
+        const res = await api.post(`/add-to-cart`,{id});
         if (res.data.success) {
           toast.success(res.data.message);
         }
       } else {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
-        const existProductIndex = cartItems.findIndex(item => item.productId === productId);
+        const existProductIndex = cartItems.findIndex(item =>  item.id == id);
+
+        console.log(existProductIndex)
         if (existProductIndex !== -1) {
           cartItems[existProductIndex].quantity += 1;
         } else {
-          cartItems.push({ productId, title:product.title,stock:product.stock, quantity: 1,image:product.images,price:product.price});
+          cartItems.push({ id, title:product.title,stock:product.stock, quantity: 1,image:product.images,price:product.price});
         }
+        toast.success('Product added to cart. Log in to save.');
 
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        toast.success('Product added to cart. Log in to save.');
       }
       
     } catch (error) {
@@ -62,6 +65,9 @@ function ProductDetails() {
   
 
   return (
+    <>
+    <Toaster/>
+    <Navbar/>
     <div className="w-full flex justify-between mt-20">
     <div className="w-1/2 flex justify-around border-r-4 ">
       <div className="flex flex-col items-center justify-center">
@@ -83,6 +89,7 @@ function ProductDetails() {
       </button>
     </div>
  </div>
+ </>
   )
 }
 

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import api from '../../services/api';
+import Navbar from '../navbar';
 
 const Login = () => {
+
     const {
         register,
         handleSubmit,
@@ -23,7 +25,8 @@ const Login = () => {
             }
             const token=res?.data?.token;
             localStorage.setItem('token',token)
-            navigate('/',{replace:true})
+            toast.success("Logined Successfully");
+            navigate('/',{replace:true, state: { user: true }})
         } catch (error) {
             const errorMessage =error?.response?.data.message ||'An error occurred. Please try again after some time';
             toast.error(errorMessage);
@@ -32,9 +35,19 @@ const Login = () => {
         }
     };
 
+    useEffect(()=>{
+       const token= localStorage.getItem('token')
+       if(token){
+        navigate('/')
+       }
+    },[])
+
     return (
         <>
             <Toaster />
+            <>
+  <Navbar/>
+
             {loading ? (<p>loading</p>) : (
                 <div className="login_bg justify-center h-screen py-6 flex flex-col w-full sm:py-12">
                     <div className="relative py-3 sm:max-w-xl w-[20%] sm:mx-auto">
@@ -120,6 +133,8 @@ const Login = () => {
                     </div>
                 </div>
             )}
+            </>
+
         </>
     );
 };

@@ -7,18 +7,19 @@ import ProductDetails from './pages/productDetails/productDetails'
 import Login from './components/Login/login'
 import Signup from './components/SignUp/signup'
 import ProtectedRoute from './components/Protected/protectedRoute'
+import CheckoutPage from './pages/checkOut/checkout'
 
 function App() {
   return (
 
       
 <Router>
-  <Navbar/>
   <Routes>
     <Route path='/' element={<Shop/>}/>
     <Route path='/login' element={<Login/>}/>
     <Route path='/signup' element={<Signup/>}/>
     <Route path='/cart' element={<Cart/>} />
+    <Route path='/checkout' element={<ProtectedRoute><CheckoutPage/></ProtectedRoute>} />
     <Route path='/product/:id' element={<ProductDetails/>} />
   </Routes>
 </Router>

@@ -79,18 +79,71 @@ const create = async (req, res) => {
     }
 };
 
+const addCart = async (req, res) => {
+    try {
+
+        const userId = req.user.id
+
+        const products = req.body.cart
+        const user = await User.findById({ _id: userId })
+
+        for (let i = 0; i < products.length; i++) {
+            const { productId, quantity } = products[i];
+
+            const product = await Product.findById(productId);
+
+            if (!product) {
+                console.error(`Product with ID ${productId} not found`);
+                continue;
+            }
+
+
+            const existingIndex = user.cart.findIndex(item => item.product.toString() === productId);
+
+            console.log(existingIndex)
+
+            if (existingIndex !== -1) {
+                const existingCartItem = user.cart[existingIndex];
+                if (product.stock >= existingCartItem.quantity + quantity) {
+                    existingCartItem.quantity += quantity;
+                    existingCartItem.total += product.price * quantity;
+                } else {
+                    console.error(`Adding more quantity for product with ID ${id} exceeds available stock`);
+                    continue;
+                }
+            } else {
+
+                console.log(product.stock, "dld")
+                if (product.stock >= quantity) {
+                    user.cart.push({
+                        product: productId,
+                        quantity,
+                        price: product.price,
+                        total: product.price * quantity
+                    });
+                }
+            }
+        }
+
+        await user.save()
+
+        return res.status(200).json({ success: true, messsage: 'successfully products add to cart' })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ success: false, messsage: 'server Error' })
+
+    }
+}
 
 const addToCart = async (req, res) => {
     try {
-
-        const  id = req.params.id
-        const  userId  = req.user.id
+        const id = req.body.id
+        const userId = req.user.id
 
         if (!id || !userId) {
-
             return res.status(400).json({ success: false, message: 'invalid id' })
         }
-
         const product = await Product.findById(id)
 
         if (!product) {
@@ -114,8 +167,8 @@ const addToCart = async (req, res) => {
             }
             return res.status(200).json({ success: true, message: 'Product quantity exceeded' });
         }
-        
-        user.cart.push({product:product._id,quantity:1,price:product.price,total:product.price});
+
+        user.cart.push({ product: product._id, quantity: 1, price: product.price, total: product.price });
         await user.save();
 
         return res.status(200).json({ success: true, message: 'Product add to cart' })
@@ -127,15 +180,15 @@ const addToCart = async (req, res) => {
 };
 
 
-const updateCart = async () => {
+const updateCart = async (req, res) => {
     try {
-        const { id } = req.params
-        const { userId } = req.user.id
-        const { action } = req.body
+        const userId = req.user.id
+        const { action } = req.body.action
+
         if (!id || !userId) {
             return res.status(400).json({ success: false, message: 'value is missing' })
         }
-        const user = await User.findById({ id: userId })
+        const user = await User.findById({ _id: userId })
 
         if (!user) {
             return res.status(400).json({ success: false, message: 'user not found' })
@@ -156,11 +209,12 @@ const updateCart = async () => {
         const cartItem = user.cart[cartItemIndex];
 
         if (action === 'increment' && cartItem.quantity < product.stock) {
-            cartItem.quantity++;
+            cartItem.quantity = cartItem.quantity + 1;
         } else if (action === 'decrement' && cartItem.quantity > 1) {
             cartItem.quantity--;
         }
 
+        console.log(cartItem.quantity)
         cartItem.total = parseInt(cartItem.quantity * cartItem.price);
 
         await user.save();
@@ -172,12 +226,12 @@ const updateCart = async () => {
     }
 }
 
-const deleteFromCart = async () => {
+const deleteFromCart = async (req, res) => {
 
     try {
 
-        const { id } = req.params
-        const { userId } = req.user.id
+        const id = req.params.id
+        const userId = req.user.id
 
         if (!id || !userId) {
             return res.status(400).json({ success: false, message: 'value is missing' })
@@ -212,6 +266,8 @@ const deleteFromCart = async () => {
 
 }
 
+//get all products
+
 const getAllProducts = async (req, res) => {
     try {
         const allProducts = await Product.find();
@@ -228,27 +284,31 @@ const getAllProducts = async (req, res) => {
     }
 };
 
-const getProduct=async(req,res)=>{
+// get single product
+
+const getProduct = async (req, res) => {
     try {
-        const {id}=req.params
-    
-        if(!id){
-            return res.status(400).json({success:false,message:'product Id is missing'})
+        const { id } = req.params
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'product Id is missing' })
         }
-    
+
         const product = await Product.findById(id)
-    
-        if(!product){
-            return res.status(400).json({success:false,message:'product not found'})
+
+        if (!product) {
+            return res.status(400).json({ success: false, message: 'product not found' })
         }
-    
-        res.status(200).json({success:true,message:'product retrived',product})
+
+        res.status(200).json({ success: true, message: 'product retrived', product })
     } catch (error) {
-        
-      return res.status(500).json({success:false,message:'Server Error'})
+
+        return res.status(500).json({ success: false, message: 'Server Error' })
     }
 
 }
+
+// get all user
 
 const getAllUsers = async (req, res) => {
     try {
@@ -267,6 +327,8 @@ const getAllUsers = async (req, res) => {
 };
 
 
+// get user single
+
 const getUser = async (req, res) => {
     try {
         const { id } = req.params;
@@ -274,7 +336,7 @@ const getUser = async (req, res) => {
             return res.status(400).json({ success: false, message: 'User ID is missing' });
         }
         const user = await User.findById(id).populate('cart.product');
-        console.log(user,"ddd")
+        console.log(user.cart, "ddd")
         if (!user) {
             return res.status(400).json({ success: false, message: 'User not found' });
         }
@@ -290,5 +352,5 @@ const getUser = async (req, res) => {
 
 
 export default {
-    login, create, addToCart, deleteFromCart, getAllProducts, updateCart,getProduct,getUser,getAllUsers
+    login, create, addToCart, deleteFromCart, getAllProducts, updateCart, getProduct, getUser, getAllUsers, addCart
 }

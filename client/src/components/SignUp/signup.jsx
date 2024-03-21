@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import toast, { Toaster } from 'react-hot-toast';
 import api from '../../services/api';
 import axios from 'axios';
+import Navbar from '../navbar';
 
 
 
@@ -23,10 +24,10 @@ const Signup = () => {
             setLoading(true)
             const res = await api.post('/create', value)
             if(res.data.success){
-                toast.success("successfully created");
+                toast.success("successfully account created");
                 navigate('/login')
             }
-            toast.error(res.data.message)
+            toast.success(res.data.message)
         }
         catch (error) {
             const errorMessage = error?.response?.data.message ||'An error occurred. Please try again after some time';
@@ -37,6 +38,7 @@ const Signup = () => {
     return (
         <>
             <Toaster />
+            <Navbar/>
             {loading ? (<p>loading</p>) : (
                 <div className="login_bg justify-center h-screen py-6 flex flex-col w-full sm:py-12">
                     <div className="relative py-3 sm:max-w-xl w-[30%] sm:mx-auto">
