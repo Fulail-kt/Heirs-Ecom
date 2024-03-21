@@ -40,6 +40,7 @@ setLoading(false)
     } else {
       const items = localStorage.getItem('cartItems');
       setCartItems(items ? JSON.parse(items) : []);
+      setLoading(false)
     }
   }, []);
 
